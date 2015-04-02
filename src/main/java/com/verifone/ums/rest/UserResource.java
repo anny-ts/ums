@@ -1,7 +1,7 @@
 package com.verifone.ums.rest;
 
 import com.verifone.ums.entity.User;
-import com.verifone.ums.repositories.UserDao;
+import com.verifone.ums.repositories.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.StreamSupport;
 
-import static java.util.stream.Collectors.toList;
+import static com.verifone.ums.rest.HttpConstants.JSON;
 
 /**
  * @author Pavel Mikhalchuk
@@ -22,29 +21,30 @@ import static java.util.stream.Collectors.toList;
 public class UserResource {
 
     @Autowired
-    UserDao userDao;
+    UserService userService;
 
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(method = RequestMethod.GET, produces = JSON)
     public List<User> listUsers() {
-        //return Lists.newArrayList(companyDao.findAll());
-        Iterable<User> iterable = userDao.findAll();
-        return StreamSupport.stream(iterable.spliterator(), false).collect(toList());
-
+        return userService.listAllUsers();
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @RequestMapping(method = RequestMethod.POST, consumes = JSON, produces = JSON)
     @ResponseBody
     public User createUser(@RequestBody User user) {
-        //return Lists.newArrayList(companyDao.findAll());
-        return userDao.save(user);
+        return userService.createUser(user);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @RequestMapping(method = RequestMethod.PUT, consumes = JSON, produces = JSON)
     @ResponseBody
     public User updateUser(@RequestBody User user) {
         //todo user.getId == null throw Exception
         //return Lists.newArrayList(companyDao.findAll());
-        return userDao.save(user);
+        return userService.updateUser(user);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, consumes = JSON)
+    public void deleteUser(@RequestBody User user) {
+        userService.deleteUser(user);
     }
 
 

@@ -40,7 +40,7 @@ public class User {
 
     private String inviteCode;
 
-    @ManyToMany(cascade= CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "company_user", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "company_id"))
     private Set<Company> companies;
@@ -137,5 +137,38 @@ public class User {
             companies = new HashSet<>();
         }
         companies.add(company);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        if (userId != null ? !userId.equals(user.userId) : user.userId != null) return false;
+        if (userType != null ? !userType.equals(user.userType) : user.userType != null) return false;
+        if (firstName != null ? !firstName.equals(user.firstName) : user.firstName != null) return false;
+        if (middleName != null ? !middleName.equals(user.middleName) : user.middleName != null) return false;
+        if (lastName != null ? !lastName.equals(user.lastName) : user.lastName != null) return false;
+        if (title != null ? !title.equals(user.title) : user.title != null) return false;
+        if (department != null ? !department.equals(user.department) : user.department != null) return false;
+        if (loginId != null ? !loginId.equals(user.loginId) : user.loginId != null) return false;
+        return !(inviteCode != null ? !inviteCode.equals(user.inviteCode) : user.inviteCode != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userId != null ? userId.hashCode() : 0;
+        result = 31 * result + (userType != null ? userType.hashCode() : 0);
+        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
+        result = 31 * result + (middleName != null ? middleName.hashCode() : 0);
+        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (department != null ? department.hashCode() : 0);
+        result = 31 * result + (loginId != null ? loginId.hashCode() : 0);
+        result = 31 * result + (inviteCode != null ? inviteCode.hashCode() : 0);
+        return result;
     }
 }

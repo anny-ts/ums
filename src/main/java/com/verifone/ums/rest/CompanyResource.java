@@ -5,6 +5,7 @@ import com.verifone.ums.entity.User;
 import com.verifone.ums.repositories.CompanyDao;
 import com.verifone.ums.repositories.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+import static com.verifone.ums.rest.HttpConstants.JSON;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -25,28 +27,34 @@ import static java.util.stream.Collectors.toList;
 public class CompanyResource {
 
 
+    @Qualifier("companyService")
     @Autowired
-    private CompanyDao companyDao;
+    private CompanyService companyService;
 
-    @Autowired
-    CompanyService companyService;
-
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(method = RequestMethod.GET, produces = JSON)
     public List<Company> listCompanies() {
-        //return Lists.newArrayList(companyDao.findAll());
-        Iterable<Company> iterable = companyDao.findAll();
-        return StreamSupport.stream(iterable.spliterator(), false).collect(toList());
+        return companyService.listAllCompanies();
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @RequestMapping(method = RequestMethod.POST, consumes = JSON, produces = JSON)
     @ResponseBody
     public Company createCompany(@RequestBody Company company) {
-        //return Lists.newArrayList(companyDao.findAll());
-         return companyDao.save(company);
+         return companyService.createCompany(company);
     }
 
-    @RequestMapping(value = "/{company_id}/user/{user_id}", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @RequestMapping(method = RequestMethod.PUT, consumes = JSON, produces = JSON)
+    @ResponseBody
+    public Company editCompany(@RequestBody Company company) {
+        return companyService.updateCompany(company);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, consumes = JSON)
+    public void deleteCompany(@RequestBody Company company) {
+        companyService.deleteCompany(company);
+    }
+
+    @RequestMapping(value = "/{company_id}/user/{user_id}", method = RequestMethod.POST, consumes = JSON, produces = JSON)
     @ResponseBody
     public User addUserToCompany(@PathVariable("company_id") String company_id, @PathVariable("user_id") String user_id) {
         //return Lists.newArrayList(companyDao.findAll());
