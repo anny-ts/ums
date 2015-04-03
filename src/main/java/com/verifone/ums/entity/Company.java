@@ -21,6 +21,7 @@ public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "company_id")
     private Long companyId;
 
     @Column(name = "company_name")
@@ -53,7 +54,27 @@ public class Company {
     public void setName(String name) {
         this.name = name;
     }
-//
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Company)) return false;
+
+        Company company = (Company) o;
+
+        if (companyId != null ? !companyId.equals(company.companyId) : company.companyId != null) return false;
+        return !(name != null ? !name.equals(company.name) : company.name != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = companyId != null ? companyId.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
+
+    //
 //    public Set<User> getUsers() {
 //        return users;
 //    }

@@ -3,9 +3,11 @@ package com.verifone.ums.rest;
 import com.verifone.ums.entity.User;
 import com.verifone.ums.repositories.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,9 +25,19 @@ public class UserResource {
     @Autowired
     UserService userService;
 
-    @RequestMapping(method = RequestMethod.GET, produces = JSON)
+    @RequestMapping(value = "list", method = RequestMethod.GET, produces = JSON)
     public List<User> listUsers() {
         return userService.listAllUsers();
+    }
+
+    @RequestMapping(value = "/{user_id}", method = RequestMethod.GET, produces = JSON)
+    public User findUserById(@PathVariable("user_id") String userId) {
+        return userService.findUserById(userId);
+    }
+
+    @RequestMapping(params = {"email"}, method = RequestMethod.GET, produces = JSON)
+    public User findUserByEmail(@RequestParam ("email") String email) {
+        return userService.findUserByEmail(email);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = JSON, produces = JSON)
@@ -42,9 +54,9 @@ public class UserResource {
         return userService.updateUser(user);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, consumes = JSON)
-    public void deleteUser(@RequestBody User user) {
-        userService.deleteUser(user);
+    @RequestMapping(value = "/{user_id}", method = RequestMethod.DELETE, consumes = JSON)
+    public void deleteUser(@PathVariable("user_id") String userId) {
+        userService.deleteUser(Long.parseLong(userId));
     }
 
 
